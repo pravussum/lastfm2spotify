@@ -10,9 +10,22 @@ You need Last.fm as well as Spotify developer accounts.
 
 ## Adapt configuration
 
-Add the corresponding credentials in application.properties
--Dspotify.clientid=<Spotify client id> -Dspotify.clientsecret=<Spotify client secret> -Dlastfm.apikey=<last.fm API key>
+Create an 'application.properties' with the corresponding credentials: 
+spotify.clientid=<Replace with Spotify client id>
+spotify.clientsecret=<Replace with Spotify client secret>
+lastfm.apikey=<Replace last.fm API key>
+ 
+## Start the application
 
+With the jar+libs when downloaded from the release:
+* extract the release (JAR  + lib directory)
+* place the application.properties in a `config` subdirectory (beside lib)
+* run `java -jar lastfm2spotify-1.0-SNAPSHOT-runner.jar`
+
+- or - 
+
+In development mode (e.g. from you IDE) 
+`mvn quarkus:dev -f pom.xml`
 
 ## Import/Export
 
