@@ -22,7 +22,7 @@ With the jar+libs when downloaded from the release:
 * place the application.properties in a `config` subdirectory (beside lib)
 * run `java -jar lastfm2spotify-1.0-SNAPSHOT-runner.jar`
 
-- or - 
+... or ...  
 
 In development mode (e.g. from you IDE) 
 `mvn quarkus:dev -f pom.xml`
