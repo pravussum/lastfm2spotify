@@ -5,10 +5,8 @@ import net.mortalsilence.TrackInfo
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import java.util.concurrent.CompletableFuture
-import java.util.stream.Collectors
 import javax.enterprise.context.ApplicationScoped
 import javax.inject.Inject
-import kotlin.streams.asStream
 
 @ApplicationScoped
 class LovedTracksRetriever {
@@ -16,27 +14,10 @@ class LovedTracksRetriever {
     @ConfigProperty(name="lastfm.apikey")
     lateinit var apikey: String
 
-    @ConfigProperty(name="lastfm.user")
-    lateinit var user: String
-
     @Inject @RestClient lateinit var lastFmClient: LastFmClient
 
-    fun retrieveLovedTracks(): Set<TrackInfo> {
-        //return getAndParsePage(1)
-        return getAllLovedTracks()
-    }
-
-    fun getAndParsePage(currentPage: Int): Sequence<TrackInfo> {
-        val page = lastFmClient.get("user.getrecenttracks", user, apikey, "json", currentPage, "1", 200)
-
-        val pair = getTracksForPage(page)
-        val totalPages = pair.first
-        var tracks = pair.second
-
-        if(currentPage < totalPages && currentPage < 50) {
-            tracks += getAndParsePage(currentPage + 1) // append sequences
-        }
-        return tracks
+    fun retrieveLovedTracks(user: String): Set<TrackInfo> {
+        return getAllLovedTracks(user)
     }
 
     private fun getTracksForPage(page: String): Pair<Int, Sequence<TrackInfo>> {
@@ -56,9 +37,10 @@ class LovedTracksRetriever {
         return Pair(totalPages, tracks)
     }
 
-    fun getAllLovedTracks() : Set<TrackInfo> {
+    fun getAllLovedTracks(user: String) : Set<TrackInfo> {
         val firstPage = lastFmClient.get("user.getrecenttracks", user, apikey, "json", 1, "1", 200)
         val (total, tracks) = getTracksForPage(firstPage)
+
         if(total <= 1) {
             return tracks.toSet()
         }

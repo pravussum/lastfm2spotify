@@ -1,57 +1,37 @@
 # lastfm2spotify project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Get developer accounts 
+Extra simple throw-away importer for your last.fm loved favourites as a Spotify playlist.
+You need Last.fm as well as Spotify developer accounts.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+* https://developer.spotify.com/dashboard/
+* https://www.last.fm/api/account/create
 
-## Running the application in dev mode
 
-You can run your application in dev mode that enables live coding using:
+## Adapt configuration
 
-```shell script
-./mvnw compile quarkus:dev
-```
+Add the corresponding credentials in application.properties
+-Dspotify.clientid=<Spotify client id> -Dspotify.clientsecret=<Spotify client secret> -Dlastfm.apikey=<last.fm API key>
 
-## Packaging and running the application
 
-The application can be packaged using:
+## Import/Export
 
-```shell script
-./mvnw package
-```
+Fire up http://localhost:8080/start in a brower to start the Spotify authentication. You will be redirected to the Spotify authentication service where you'll need to approve that the app is allowed to access your Spotify data. 
+Once this is done, you will be redirected to the app (it should report "true" if authentication flow was finished successfully).
 
-It produces the `lastfm2spotify-1.0-SNAPSHOT-runner.jar` file in the `/target` directory. Be aware that it’s not an _
-über-jar_ as the dependencies are copied into the `target/lib` directory.
+Start the import by visiting (replace <last.fm username> and <Spotify username> obviously)
+http://localhost:8080/sync?lastfmuser=<last.fm username>&spotifyuser=<Spotify username> e.g.
+`http://localhost:8080/sync?lastfmuser=sherlock&spotifyuser=watson`
 
-If you want to build an _über-jar_, execute the following command:
+## Notes
 
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
-```
+Be patient:
+* Due to the fact that last.fm doesn't offer an API method to retrieve all loved tracks ALL tracks need to be scraped page by page.
+* Due to the fact that Spotify doesn't offer an API method for searching multiple tracks at once or adding items to playlists by name, we have to search track by track.
 
-The application is now runnable using `java -jar target/lastfm2spotify-1.0-SNAPSHOT-runner.jar`.
+The last.fm request will be sent in parallel. 
+Spotify has a rate limit in place, which will kick in from time to time (already does when importing a few hundred tracks). Requests will be throttled automatically.   
 
-## Creating a native executable
+## TBD
 
-You can create a native executable using:
-
-```shell script
-./mvnw package -Pnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/lastfm2spotify-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html
-.
-
-# RESTEasy JAX-RS
-
-<p>A Hello World RESTEasy resource</p>
-
-Guide: https://quarkus.io/guides/rest-json
+A little front end ;-)
